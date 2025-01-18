@@ -8,6 +8,8 @@ export default defineConfig({
 		url: process.env.DATABASE_URL
 	},
 
+	schemaFilter: 'vanmelder',
+
 	verbose: true,
 	strict: true,
 	dialect: 'postgresql'

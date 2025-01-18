@@ -1,6 +1,12 @@
-import { pgTable, serial, text, integer } from 'drizzle-orm/pg-core';
+import { serial, uuid, timestamp, pgSchema } from 'drizzle-orm/pg-core';
 
-export const user = pgTable('user', {
+export const schema = pgSchema('vanmelder');
+
+export const reportsTable = schema.table('reports', {
 	id: serial('id').primaryKey(),
-	age: integer('age')
+	deviceUUID: uuid('device_uuid'),
+	timestamp: timestamp('timestamp').notNull().defaultNow()
 });
+
+export type InsertReport = typeof reportsTable.$inferInsert;
+export type SelectReport = typeof reportsTable.$inferSelect;
