@@ -1,24 +1,25 @@
 <script lang="ts">
-    import { page } from '$app/state';
-    import { trpc } from '$lib/trpc/client';
-  
-    let greeting = 'press the button to load data';
-    let loading = false;
-  
-    const loadData = async () => {
-      loading = true;
-      greeting = await trpc(page).greeting.query();
-      loading = false;
-    };
-  </script>
-  
-  <h6>Loading data in<br /><code>+page.svelte</code></h6>
-  
-  <a
-    href="#load"
-    role="button"
-    class="secondary"
-    aria-busy={loading}
-    on:click|preventDefault={loadData}>Load</a
-  >
-  <p>{greeting}</p>
+	import HighscoreBadge from '@/components/common/highscore-badge.svelte';
+	import ImageSelector from '@/components/common/image-selector.svelte';
+	import ImageUploader from '@/components/common/image-uploader.svelte';
+
+	let files = $state([] as File[]);
+
+	// const loadData = async () => {
+	// 	loading = true;
+	// 	greeting = await trpc(page).greeting.query();
+	// 	loading = false;
+	// };
+</script>
+
+<HighscoreBadge />
+
+<div>
+	{#each files as item}
+		<ImageUploader file={item} />
+	{/each}
+</div>
+
+<div class="fixed bottom-0 right-0 p-4">
+	<ImageSelector onFile={(file) => files.unshift(file)} />
+</div>
