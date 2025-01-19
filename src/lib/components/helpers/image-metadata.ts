@@ -1,4 +1,5 @@
 import ExifReader from 'exifreader';
+import { format } from 'date-fns';
 
 type NominatimResponse = {
 	address: {
@@ -18,10 +19,16 @@ type NominatimResponse = {
 export type Metadata = {
 	date?: string;
 	address?: string;
+	resolution: {
+		x: number;
+		y: number;
+	};
 };
 
 export async function getMetaData(image: File): Promise<Metadata> {
 	const tags = await ExifReader.load(image);
+
+	console.log(tags);
 
 	const exifDate = tags.DateTimeOriginal?.description;
 	const date = getDateTime(exifDate);
@@ -32,13 +39,17 @@ export async function getMetaData(image: File): Promise<Metadata> {
 	const address = await getAddress(lat, lon);
 	return {
 		date: date,
-		address: address
+		address: address,
+		resolution: {
+			x: Number(tags.XResolution?.description),
+			y: Number(tags.YResolution?.description)
+		}
 	};
 }
 
 function getDateTime(exifDate?: string) {
 	if (!exifDate) {
-		return undefined;
+		return format(new Date(), 'yyyy-MM-ddTHH:mm:ss');
 	}
 
 	const dateTime = exifDate.split(' ');
@@ -79,10 +90,6 @@ async function getAddress(lat?: string, lon?: string) {
 		nominatimResponse.address.county;
 
 	city = nominatimResponse.address.postcode + ' ' + city;
-
-	if (nominatimResponse.address.neighbourhood) {
-		city = nominatimResponse.address.neighbourhood + ', ' + city;
-	}
 
 	return road + ', ' + city;
 }

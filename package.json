@@ -47,6 +47,7 @@
 		"@tanstack/svelte-query": "^5.64.1",
 		"@trpc/client": "^10.45.2",
 		"@trpc/server": "^10.45.2",
+		"date-fns": "^4.1.0",
 		"drizzle-orm": "^0.38.4",
 		"exifreader": "^4.26.0",
 		"postgres": "^3.4.5",
