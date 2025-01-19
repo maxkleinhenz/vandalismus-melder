@@ -12,9 +12,11 @@
 	// };
 </script>
 
-<HighscoreBadge />
+<div class="fixed inset-x-0 top-0 flex justify-center p-4">
+	<HighscoreBadge />
+</div>
 
-<div>
+<div class="pt-14">
 	{#each files as item}
 		<ImageUploader file={item} />
 	{/each}
