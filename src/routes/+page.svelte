@@ -1,7 +1,6 @@
 <script lang="ts">
-	import HighscoreBadge from '@/components/common/highscore-badge.svelte';
-	import ImageSelector from '@/components/common/image-selector.svelte';
-	import ImageUploader from '@/components/common/image-uploader.svelte';
+	import HighscoreBadge from '@/components/highscore/highscore-badge.svelte';
+	import ImageSelector from '@/components/image/image-selector.svelte';
 
 	let files = $state([] as File[]);
 
@@ -16,12 +15,6 @@
 	<HighscoreBadge />
 </div>
 
-<div class="pt-14">
-	{#each files as item}
-		<ImageUploader file={item} />
-	{/each}
-</div>
-
 <div class="fixed bottom-0 right-0 p-4">
-	<ImageSelector onFile={(file) => files.unshift(file)} />
+	<ImageSelector />
 </div>

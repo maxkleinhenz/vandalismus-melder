@@ -28,8 +28,6 @@ export type Metadata = {
 export async function getMetaData(image: File): Promise<Metadata> {
 	const tags = await ExifReader.load(image);
 
-	console.log(tags);
-
 	const exifDate = tags.DateTimeOriginal?.description;
 	const date = getDateTime(exifDate);
 
@@ -49,7 +47,10 @@ export async function getMetaData(image: File): Promise<Metadata> {
 
 function getDateTime(exifDate?: string) {
 	if (!exifDate) {
-		return format(new Date(), 'yyyy-MM-ddTHH:mm:ss');
+		const now = new Date();
+		const date = format(now, 'yyyy-MM-dd');
+		const time = format(now, 'HH:mm:ss');
+		return `${date}T${time}`;
 	}
 
 	const dateTime = exifDate.split(' ');
