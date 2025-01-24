@@ -15,7 +15,7 @@
 	import { Textarea } from '../ui/textarea';
 
 	let selectedFile = $state<File | undefined>(undefined);
-	let metadata = $state<Metadata | undefined>(undefined);
+	let metadata = $state<unkown | undefined>(undefined);
 
 	let fileinput: HTMLInputElement;
 
@@ -42,12 +42,12 @@
 		if (!file) return;
 
 		metadata = await getMetaData(file);
-		formData.set({ dataUrl: '', dateTime: metadata.date ?? '', address: metadata.address ?? '' });
-		formData.subscribe((v) => {
-			if (!metadata) return;
-			metadata.date = v.dateTime;
-			metadata.address = v.address;
-		});
+		// formData.set({ dataUrl: '', dateTime: metadata.date ?? '', address: metadata.address ?? '' });
+		// formData.subscribe((v) => {
+		// 	if (!metadata) return;
+		// 	metadata.date = v.dateTime;
+		// 	metadata.address = v.address;
+		// });
 
 		selectedFile = file;
 	}
@@ -100,7 +100,7 @@
 			</Dialog.Header>
 			<!-- <ScrollArea class="h-5/6"> -->
 			<div class="grid gap-4 overflow-auto">
-				<Form.Field {form} name="dataUrl">
+				<!-- <Form.Field {form} name="dataUrl">
 					<Form.Control>
 						{#snippet children({ props })}
 							{#if selectedFile && metadata}
@@ -113,9 +113,10 @@
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
-				</Form.Field>
+				</Form.Field> -->
+				<pre>{JSON.stringify(metadata, null, 2)}</pre>
 
-				<Form.Field {form} name="dateTime" class="px-2">
+				<!-- <Form.Field {form} name="dateTime" class="px-2">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Label for="date" class="">Datum</Label>
@@ -132,7 +133,7 @@
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
-				</Form.Field>
+				</Form.Field> -->
 
 				<!-- {#if selectedFile && metadata}
 				<ImageCanvas
