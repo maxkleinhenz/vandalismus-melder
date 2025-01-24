@@ -83,13 +83,7 @@
 	variant="default"
 	class="h-14 w-14 rounded-full shadow-lg ring-1 ring-slate-300 [&_svg]:size-6"><Plus /></Button
 >
-<input
-	style="display:none"
-	type="file"
-	accept="image/*"
-	bind:this={fileinput}
-	onchange={handleFileChange}
-/>
+<input style="display:none" type="file" bind:this={fileinput} onchange={handleFileChange} />
 
 <Dialog.Root open={!!selectedFile}>
 	<form method="POST" use:enhance>
