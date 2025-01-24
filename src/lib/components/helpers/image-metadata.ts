@@ -25,72 +25,72 @@ export type Metadata = {
 	};
 };
 
-export async function getMetaData(image: File): Promise<unknown> {
+export async function getMetaData(image: File): Promise<Metadata> {
 	const tags = await ExifReader.load(image);
-	return tags;
-	// const exifDate = tags.DateTimeOriginal?.description;
-	// const date = getDateTime(exifDate);
 
-	// const lat = tags.GPSLatitude?.description;
-	// const lon = tags.GPSLongitude?.description;
+	const exifDate = tags.DateTimeOriginal?.description;
+	const date = getDateTime(exifDate);
 
-	// const address = await getAddress(lat, lon);
-	// return {
-	// 	date: date,
-	// 	address: address,
-	// 	resolution: {
-	// 		x: Number(tags.XResolution?.description),
-	// 		y: Number(tags.YResolution?.description)
-	// 	}
-	// };
+	const lat = tags.GPSLatitude?.description;
+	const lon = tags.GPSLongitude?.description;
+
+	const address = await getAddress(lat, lon);
+	return {
+		date: date,
+		address: address,
+		resolution: {
+			x: Number(tags.XResolution?.description),
+			y: Number(tags.YResolution?.description)
+		}
+	};
 }
 
-// function getDateTime(exifDate?: string) {
-// 	if (!exifDate) {
-// 		const now = new Date();
-// 		const date = format(now, 'yyyy-MM-dd');
-// 		const time = format(now, 'HH:mm:ss');
-// 		return `${date}T${time}`;
-// 	}
+function getDateTime(exifDate?: string) {
+	if (!exifDate) {
+		const now = new Date();
+		const date = format(now, 'yyyy-MM-dd');
+		const time = format(now, 'HH:mm:ss');
+		return `${date}T${time}`;
+	}
 
-// 	const dateTime = exifDate.split(' ');
-// 	const regex = new RegExp(':', 'g');
-// 	dateTime[0] = dateTime[0].replace(regex, '-');
+	const dateTime = exifDate.split(' ');
+	const regex = new RegExp(':', 'g');
+	dateTime[0] = dateTime[0].replace(regex, '-');
 
-// 	return `${dateTime[0]}T${dateTime[1]}`;
-// 	// const date = new Date(Date.parse(`${dateTime[0]}T${dateTime[1]}`));
-// 	// return date.toLocaleDateString(navigator.language, {
-// 	// 	year: 'numeric',
-// 	// 	month: 'numeric',
-// 	// 	day: 'numeric',
-// 	// 	hour: '2-digit',
-// 	// 	minute: '2-digit',
-// 	// 	second: '2-digit'
-// 	// });
-// }
+	return `${dateTime[0]}T${dateTime[1]}`;
+	// const date = new Date(Date.parse(`${dateTime[0]}T${dateTime[1]}`));
+	// return date.toLocaleDateString(navigator.language, {
+	// 	year: 'numeric',
+	// 	month: 'numeric',
+	// 	day: 'numeric',
+	// 	hour: '2-digit',
+	// 	minute: '2-digit',
+	// 	second: '2-digit'
+	// });
+}
 
-// async function getAddress(lat?: string, lon?: string) {
-// 	if (!lat || !lon) {
-// 		return '';
-// 	}
+async function getAddress(lat?: string, lon?: string) {
+	if (!lat || !lon) {
+		return '';
+	}
 
-// 	const response = await fetch(
-// 		`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-// 	);
-// 	const nominatimResponse = (await response.json()) as NominatimResponse;
+	const response = await fetch(
+		`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+	);
+	const nominatimResponse = (await response.json()) as NominatimResponse;
 
-// 	let road = nominatimResponse.address.road;
-// 	if (nominatimResponse.address.house_number != null) {
-// 		road = road + ' ' + nominatimResponse.address.house_number;
-// 	}
+	let road = nominatimResponse.address.road;
+	if (nominatimResponse.address.house_number != null) {
+		road = road + ' ' + nominatimResponse.address.house_number;
+	}
 
-// 	let city =
-// 		nominatimResponse.address.village ??
-// 		nominatimResponse.address.city ??
-// 		nominatimResponse.address.municipality ??
-// 		nominatimResponse.address.county;
+	let city =
+		nominatimResponse.address.village ??
+		nominatimResponse.address.city ??
+		nominatimResponse.address.municipality ??
+		nominatimResponse.address.county;
 
-// 	city = nominatimResponse.address.postcode + ' ' + city;
+	city = nominatimResponse.address.postcode + ' ' + city;
 
-// 	return road + ', ' + city;
-// }
+	return road + ', ' + city;
+}
