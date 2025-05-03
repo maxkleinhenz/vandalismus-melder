@@ -68,9 +68,7 @@ export const uploadImage = createServerFn({
         method: "PUT",
         headers: {
           "X-Requested-With": "XMLHttpRequest",
-          Authorization: `Basic ${btoa(
-            "KZxRHmR9K8tEiMj" /*env.FILE_DROP_KEY*/ + ":"
-          )}`,
+          Authorization: `Basic ${btoa(process.env.FILE_DROP_KEY + ":")}`,
         },
         body: file,
       }
