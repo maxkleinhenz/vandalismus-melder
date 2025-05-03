@@ -1,18 +1,22 @@
+import { highscoreQueryOptions } from "@/components/highscore/highscore";
 import ImageCanvas from "@/components/report/image-canvas";
 import { getMetaData } from "@/components/report/useMetadata";
+import useUserId from "@/components/report/useUserId";
 import { Button } from "@/components/ui/button";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { insertReport } from "@/lib/server/db/queries/reports";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Navigate, Router } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { format, set } from "date-fns";
 import { useState } from "react";
+import sanitize from "sanitize-filename";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
-import sanitize from "sanitize-filename";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg"]; // 'image/jpeg', 'image/png', 'image/webp'
 
 const uploadSchema = zfd.formData({
+  userId: zfd.text(),
   dataUrl: zfd.text().refine((dataUrl) => {
     const type = dataUrl.substring(
       dataUrl.indexOf(":") + 1,
@@ -36,22 +40,8 @@ export const uploadImage = createServerFn({
 })
   .validator((data) => {
     return uploadSchema.parse(data);
-    // if (!(data instanceof FormData)) {
-    //   throw new Error("Invalid form data");
-    // }
-    // const dataUrl = data.get("dataUrl");
-    // const age = data.get("date");
-    // const age = data.get("date");
-
-    // if (!dataUrl) {
-    //   throw new Error("Name and age are required");
-    // }
-
-    // return {
-    //   dataUrl: dataUrl.toString(),
-    // };
   })
-  .handler(async ({ data: { dataUrl, date, address } }) => {
+  .handler(async ({ data: { userId, dataUrl, date, address } }) => {
     const resp = await fetch(dataUrl);
     const blob = await resp.blob();
 
@@ -59,8 +49,6 @@ export const uploadImage = createServerFn({
     const filename = sanitize(
       `${format(date, "yyyy-MM-dd_HH-mm-ss")}_${address}.jpg`
     );
-
-    // https://cloud.rote.tools/index.php/s/KZxRHmR9K8tEiMj
 
     const response = await fetch(
       `https://cloud.rote.tools/public.php/webdav/${filename}`,
@@ -73,6 +61,11 @@ export const uploadImage = createServerFn({
         body: file,
       }
     );
+
+    console.log("response", response.ok);
+    if (response.ok) {
+      insertReport(userId);
+    }
 
     return response.status;
   });
@@ -96,12 +89,18 @@ export const Route = createFileRoute("/new/")({
 
 function RouteComponent() {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
-
   const data = Route.useLoaderData();
+  const queryClient = useQueryClient();
+
+  const userId = useUserId();
 
   const mutation = useMutation({
     mutationFn: async (formdata: FormData) => {
-      return await uploadImage({ data: formdata });
+      const resp = await uploadImage({ data: formdata });
+      queryClient.refetchQueries({
+        queryKey: highscoreQueryOptions(userId).queryKey,
+      });
+      return resp;
     },
   });
 
@@ -118,6 +117,7 @@ function RouteComponent() {
             return;
           }
           const formData = new FormData();
+          formData.append("userId", userId);
           formData.append("dataUrl", dataUrl);
           formData.append("date", data.metadata.date.toString());
           formData.append("address", data.metadata.address || "");
