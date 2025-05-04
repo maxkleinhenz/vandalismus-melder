@@ -48,11 +48,11 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-slate-100">
         <div className="fixed inset-x-0 top-0 flex justify-center p-4">
           <Highscore />
         </div>
-        <div className="pt-16">{children}</div>
+        <div className="pt-14">{children}</div>
         <Scripts />
       </body>
     </html>

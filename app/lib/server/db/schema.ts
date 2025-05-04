@@ -1,7 +1,7 @@
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 export const reportTable = pgTable("vand_report", {
   id: serial("id").primaryKey(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   user: text("user").notNull(),
 });
 

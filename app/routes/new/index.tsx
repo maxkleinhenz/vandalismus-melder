@@ -1,4 +1,3 @@
-import { highscoreQueryOptions } from "@/components/highscore/highscore";
 import ImageCanvas from "@/components/report/image-canvas";
 import { getMetaData } from "@/components/report/useMetadata";
 import useUserId from "@/components/report/useUserId";
@@ -97,11 +96,14 @@ function RouteComponent() {
   const mutation = useMutation({
     mutationFn: async (formdata: FormData) => {
       const resp = await uploadImage({ data: formdata });
-      queryClient.refetchQueries({
-        queryKey: highscoreQueryOptions(userId).queryKey,
-      });
       return resp;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["reports"],
+      });
+    },
+    mutationKey: ["reports"],
   });
 
   return (

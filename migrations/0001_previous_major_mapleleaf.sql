@@ -1,0 +1,1 @@
+ALTER TABLE "vand_report" ALTER COLUMN "created_at" SET NOT NULL;
