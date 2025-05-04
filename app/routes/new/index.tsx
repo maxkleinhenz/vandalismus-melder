@@ -99,7 +99,7 @@ function RouteComponent() {
       return resp;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
         queryKey: ["reports"],
       });
     },
